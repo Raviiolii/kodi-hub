@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Kubo</title>
+<style>
+  :root{
+    --bg:#05070c; --panel:#0d1119; --panel2:#141a26; --line:#202737;
+    --txt:#f4f6fb; --muted:#93a0b8; --accent:#6d8cff; --accent2:#a06bff;
+    --ok:#2fdc8a; --warn:#ffb020; --bad:#ff5f6d;
+    --r:16px; --dur:.45s; --ease:cubic-bezier(.22,.61,.36,1);
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;background:var(--bg);color:var(--txt);overflow-x:hidden;
+    font:15.5px/1.5 -apple-system,"Segoe UI",Inter,Roboto,sans-serif;scroll-behavior:smooth}
+  img{display:block}
+  button{font:inherit;border:0;background:none;color:inherit;cursor:pointer}
+  ::-webkit-scrollbar{height:9px;width:9px}
+  ::-webkit-scrollbar-thumb{background:#232c3e;border-radius:9px}
+
+  /* ---------- animaciones base ---------- */
+  @keyframes fadeUp{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:none}}
+  @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+  @keyframes zoomSlow{from{transform:scale(1.04)}to{transform:scale(1.16)}}
+  @keyframes pulse{0%,100%{opacity:.55}50%{opacity:1}}
+  @keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+  @keyframes shimmer{0%{background-position:-300px 0}100%{background-position:300px 0}}
+  .reveal{opacity:0;transform:translateY(22px)}
+  .reveal.in{animation:fadeUp var(--dur) var(--ease) forwards}
+
+  /* ---------- top bar ---------- */
+  header{position:fixed;top:0;left:0;right:0;z-index:30;display:flex;align-items:center;gap:16px;
+    padding:14px clamp(14px,4vw,44px);transition:background .3s ease,backdrop-filter .3s ease}
+  header.solid{background:#05070ce6;backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+  .brand{display:flex;align-items:center;gap:9px;font-weight:800;font-size:21px;letter-spacing:.4px}
+  .mark{width:32px;height:32px;border-radius:10px;background:linear-gradient(145deg,var(--accent2),var(--accent));
+    display:grid;place-items:center;font-size:17px;box-shadow:0 6px 22px #6d8cff44}
+  nav{display:none;gap:20px;color:#c2cbdd;font-size:14.5px}
+  nav a{color:inherit;text-decoration:none;cursor:pointer;transition:color .2s}
+  nav a:hover{color:#fff}
+  .grow{flex:1}
+  .searchbox{display:flex;align-items:center;gap:8px;background:#0d1119cc;border:1px solid var(--line);
+    border-radius:11px;padding:8px 12px;transition:border-color .2s,width .3s var(--ease);width:150px}
+  .searchbox:focus-within{border-color:var(--accent);width:230px}
+  .searchbox input{background:none;border:0;outline:0;color:var(--txt);width:100%;font-size:14px}
+  .devices{display:flex;gap:7px}
+  .dev{display:flex;gap:7px;align-items:center;background:#0d111999;border:1px solid var(--line);
+    padding:7px 12px;border-radius:999px;font-size:13px;color:var(--muted);transition:all .2s}
+  .dev:hover{color:var(--txt);border-color:#3a4560}
+  .dev.sel{border-color:var(--accent);color:#fff;background:#16203a}
+  .dev .d{width:8px;height:8px;border-radius:50%;background:var(--bad)}
+  .dev.on .d{background:var(--ok);box-shadow:0 0 10px var(--ok)}
+  .avatar{width:34px;height:34px;border-radius:50%;background:linear-gradient(145deg,#2b3category,#2b3452,#1b2334);
+    display:grid;place-items:center;font-weight:700;font-size:14px;border:1px solid var(--line);transition:transform .2s}
+  .avatar:hover{transform:scale(1.07)}
+
+  /* ---------- hero ---------- */
+  .hero{position:relative;min-height:78vh;display:flex;align-items:flex-end;padding:120px clamp(14px,4vw,44px) 56px;overflow:hidden}
+  .hero .bg{position:absolute;inset:0;background-size:cover;background-position:center;
+    animation:zoomSlow 18s ease-in-out infinite alternate;filter:saturate(1.05)}
+  .hero .scrim{position:absolute;inset:0;
+    background:linear-gradient(90deg,#05070cf2 0%,#05070c99 45%,#05070c33 70%,#05070c66 100%),
+               linear-gradient(180deg,#05070c00 40%,#05070c 100%)}
+  .hero .inner{position:relative;max-width:660px;animation:fadeUp .7s var(--ease) both}
+  .kicker{display:inline-flex;gap:9px;align-items:center;font-size:12.5px;color:#cfd8ea;margin-bottom:12px}
+  .kicker b{background:#ffffff17;border:1px solid #ffffff26;border-radius:7px;padding:3px 8px;font-weight:700;letter-spacing:.4px}
+  .hero h1{font-size:clamp(34px,6vw,64px);line-height:1.02;margin:0 0 14px;font-weight:800;letter-spacing:-.5px}
+  .hero p{color:#c6cfe1;font-size:16.5px;max-width:560px;margin:0 0 8px}
+  .meta{display:flex;gap:12px;color:var(--muted);font-size:13.5px;margin:12px 0 22px;flex-wrap:wrap}
+  .btns{display:flex;gap:12px;flex-wrap:wrap}
+  .btn{padding:13px 26px;border-radius:12px;font-weight:700;display:flex;align-items:center;gap:9px;
+    transition:transform .16s var(--ease),background .2s,box-shadow .2s}
+  .btn:active{transform:scale(.97)}
+  .btn.play{background:#fff;color:#0a0d14;box-shadow:0 10px 30px #ffffff1f}
+  .btn.play:hover{background:#eaeefb}
+  .btn.ghost{background:#ffffff1c;color:#fff;border:1px solid #ffffff26}
+  .btn.ghost:hover{background:#ffffff2b}
+  .dots{display:flex;gap:7px;margin-top:26px}
+  .dots i{width:26px;height:4px;border-radius:4px;background:#ffffff2e;cursor:pointer;transition:background .3s,width .3s}
+  .dots i.on{background:#fff;width:40px}
+
+  /* ---------- filas ---------- */
+  .rows{padding-bottom:90px}
+  .row{margin:0 0 34px;position:relative}
+  .row h2{font-size:19.5px;margin:0 0 14px;padding:0 clamp(14px,4vw,44px);font-weight:750;letter-spacing:.1px;
+    display:flex;align-items:center;gap:10px}
+  .row h2 small{color:var(--muted);font-weight:500;font-size:13px}
+  .strip{display:flex;gap:16px;overflow-x:auto;scroll-snap-type:x proximity;padding:6px clamp(14px,4vw,44px) 12px}
+  .strip::-webkit-scrollbar{height:0}
+  .card{flex:0 0 auto;width:190px;scroll-snap-align:start;position:relative;cursor:pointer;
+    transition:transform .2s var(--ease)}
+  .card:hover{transform:translateY(-7px) scale(1.03)}
+  .card .art{width:100%;height:270px;border-radius:14px;background:linear-gradient(180deg,var(--panel),var(--panel2));
+    overflow:hidden;border:1px solid var(--line);position:relative}
+  .card .art img{width:100%;height:100%;object-fit:cover;transition:transform .4s var(--ease),filter .3s}
+  .card:hover .art img{transform:scale(1.07);filter:brightness(1.08)}
+  .card .name{margin-top:9px;font-size:13.8px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .card .sub{color:var(--muted);font-size:12.2px}
+  .card .bar{position:absolute;left:12px;right:12px;bottom:12px;height:4px;background:#ffffff33;border-radius:4px;overflow:hidden}
+  .card .bar i{display:block;height:100%;background:var(--accent)}
+  .card .badge{position:absolute;top:10px;left:10px;background:#05070ccc;border:1px solid var(--line);
+    padding:3px 8px;border-radius:999px;font-size:11px;color:#cfd8ea}
+  /* tiles de servicios */
+  .card.svc{width:172px}
+  .card.svc .art{height:106px;display:grid;place-items:center}
+  .card.svc .art img{width:62px;height:62px;object-fit:contain;padding:9px;border-radius:14px}
+  .card.svc .art .fallback{width:62px;height:62px;border-radius:14px;display:grid;place-items:center;
+    font-weight:800;font-size:22px;color:#fff}
+  .card.svc .name{margin-top:8px;font-size:13px;text-align:center}
+
+  /* ---------- sheet (detalle / plan) ---------- */
+  .sheetwrap{position:fixed;inset:0;z-index:60;display:none}
+  .sheetwrap.open{display:block}
+  .sheetwrap .veil{position:absolute;inset:0;background:#03050ac9;backdrop-filter:blur(7px);animation:fadeIn .3s ease}
+  .sheet{position:absolute;left:0;right:0;bottom:0;max-height:88vh;overflow-y:auto;
+    background:linear-gradient(180deg,#131a27,#0a0e16);border-radius:22px 22px 0 0;border-top:1px solid var(--line);
+    padding:20px clamp(16px,4vw,40px) 40px;animation:slideUp .42s var(--ease)}
+  @media(min-width:900px){ .sheet{left:auto;right:40px;bottom:40px;width:520px;border-radius:22px;border:1px solid var(--line)} }
+  .sheet .close{position:absolute;top:14px;right:16px;width:34px;height:34px;border-radius:50%;
+    background:#ffffff14;display:grid;place-items:center;font-size:17px}
+  .sheet h3{font-size:24px;margin:10px 0 8px}
+  .sheet .chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+  .chip{background:#0e1420;border:1px solid var(--line);border-radius:999px;padding:5px 11px;font-size:12.2px;color:var(--muted)}
+  .chip.ok{border-color:#2fdc8a55;color:#9ff0c8}
+  .chip.warn{border-color:#ffb02055;color:#ffd894}
+  .planbox{background:#0e1420;border:1px solid var(--line);border-radius:14px;padding:14px;margin:6px 0 14px}
+  .planrow{display:flex;justify-content:space-between;padding:6px 0;font-size:14px}
+  .planrow span:first-child{color:var(--muted)}
+  .actions{display:flex;gap:10px;flex-wrap:wrap}
+  .actions .btn{padding:11px 16px;font-size:14px;border-radius:11px}
+  .danger{background:#ff5f6d1f;border:1px solid #ff5f6d55;color:#ffd3d7}
+
+  /* ---------- overlay "reproduciendo" ---------- */
+  .playing{position:fixed;left:50%;bottom:26px;transform:translateX(-50%) translateY(24px);z-index:70;
+    background:#0b1020ee;border:1px solid var(--line);border-radius:16px;padding:13px 20px;display:flex;gap:13px;align-items:center;
+    opacity:0;pointer-events:none;transition:all .3s var(--ease);backdrop-filter:blur(10px)}
+  .playing.on{opacity:1;transform:translateX(-50%) translateY(0)}
+  .playing .eq{display:flex;gap:3px;align-items:flex-end;height:20px}
+  .playing .eq i{width:3px;background:var(--accent);border-radius:3px;animation:pulse 1s infinite}
+  .playing .eq i:nth-child(2){animation-delay:.2s}.playing .eq i:nth-child(3){animation-delay:.4s}
+  .playing .eq i:nth-child(4){animation-delay:.1s}
+  .playing b{font-weight:600}
+
+  /* ---------- bottom nav (móvil) ---------- */
+  .bottom{position:fixed;bottom:0;left:0;right:0;z-index:40;display:flex;justify-content:space-around;
+    padding:10px 0 calc(10px + env(safe-area-inset-bottom));background:#05070cf2;backdrop-filter:blur(14px);
+    border-top:1px solid var(--line)}
+  .bottom button{display:flex;flex-direction:column;gap:3px;align-items:center;font-size:11px;color:var(--muted)}
+  .bottom button.on{color:#fff}
+  .bottom svg{width:21px;height:21px;fill:currentColor}
+  @media(min-width:900px){ .bottom{display:none} nav{display:flex} .rows{padding-bottom:40px} }
+
+  .toast{position:fixed;left:50%;top:80px;transform:translateX(-50%) translateY(-14px);z-index:80;
+    background:#0b1020ee;border:1px solid var(--line);border-radius:12px;padding:11px 18px;font-size:13.5px;
+    opacity:0;pointer-events:none;transition:all .28s var(--ease)}
+  .toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+  .skel{background:linear-gradient(90deg,#141a26 25%,#1c2433 37%,#141a26 63%);
+    background-size:600px 100%;animation:shimmer 1.4s linear infinite}
+</style>
+</head>
+<body>
+
+<header id="top">
+  <div class="brand"><div class="mark">K</div>Kubo</div>
+  <nav>
+    <a onclick="go('inicio')">Inicio</a>
+    <a onclick="go('servicios')">Servicios</a>
+    <a onclick="go('peliculas')">Películas</a>
+    <a onclick="go('juegos')">Juegos</a>
+  </nav>
+  <div class="grow"></div>
+  <div class="searchbox"><span>🔍</span><input id="q" placeholder="Buscar títulos o servicios" oninput="render()"></div>
+  <div class="devices" id="devices"></div>
+  <button class="avatar" onclick="openPlan()">TÚ</button>
+</header>
+
+<section class="hero" id="inicio">
+  <div class="bg" id="heroBg"></div>
+  <div class="scrim"></div>
+  <div class="inner">
+    <div class="kicker" id="heroKicker"></div>
+    <h1 id="heroTitle">Cargando…</h1>
+    <div class="meta" id="heroMeta"></div>
+    <p id="heroDesc"></p>
+    <div class="btns">
+      <button class="btn play" onclick="playHero()">▶ Reproducir</button>
+      <button class="btn ghost" onclick="openPlan()">👤 Mi plan</button>
+    </div>
+    <div class="dots" id="heroDots"></div>
+  </div>
+</section>
+
+<div class="rows" id="rows"></div>
+
+<nav class="bottom">
+  <button class="on" onclick="go('inicio')"><svg viewBox="0 0 24 24"><path d="M12 3 2 12h3v9h6v-6h2v6h6v-9h3z"/></svg>Inicio</button>
+  <button onclick="go('servicios')"><svg viewBox="0 0 24 24"><path d="M4 4h7v7H4zm9 0h7v7h-7zM4 13h7v7H4zm9 0h7v7h-7z"/></svg>Servicios</button>
+  <button onclick="go('peliculas')"><svg viewBox="0 0 24 24"><path d="M4 5h16v14H4zm2 2v10h12V7zM6 7l3 3H6zm12 10-3-3h3z"/></svg>Películas</button>
+  <button onclick="openPlan()"><svg viewBox="0 0 24 24"><path d="M12 12a5 5 0 1 0-5-5 5 5 0 0 0 5 5zm0 2c-4 0-8 2-8 4v2h16v-2c0-2-4-4-8-4z"/></svg>Mi plan</button>
+</nav>
+
+<div class="sheetwrap" id="sheet"><div class="veil" onclick="closeSheet()"></div><div class="sheet" id="sheetBody"></div></div>
+<div class="playing" id="playing"><div class="eq"><i style="height:8px"></i><i style="height:16px"></i><i style="height:12px"></i><i style="height:19px"></i></div>
+  <div><b id="playingTitle">Reproduciendo</b><div style="font-size:12.5px;color:var(--muted)" id="playingSub"></div></div></div>
+<div class="toast" id="toast"></div>
+
+<script>
+let SERVICES={rows:[]}, FILMS=[], devices=[], sel=localStorage.getItem('kubo.sel')||null, heroIdx=0, heroTimer=null;
+const $=s=>document.querySelector(s);
+const toast=m=>{const t=$('#toast');t.textContent=m;t.classList.add('on');setTimeout(()=>t.classList.remove('on'),2600)};
+const go=id=>document.getElementById(id)?.scrollIntoView({behavior:'smooth',block:'start'});
+
+const HEROES=[
+  {title:'South Park', kicker:['GRATIS','25 temporadas','ES / EN'], meta:['Comedia','TV-MA','1997'], 
+   desc:'Todo el pueblo de South Park, gratis y legal. Cuatro niños, un pueblo y cero límites.',
+   bg:'assets/southpark-bg.jpg', action:{kind:'service', id:'southpark'}},
+  {title:'Películas de dominio público', kicker:['GRATIS','Internet Archive','HD'],
+   meta:['Clásicos','1940-2000','Sin anuncios'], desc:'Cine libre de derechos: clásicos restaurados que puedes ver sin pagar nada.',
+   bg:'', action:{kind:'service', id:'archive'}},
+  {title:'Juegos en la nube', kicker:['NUEVO','Xbox Cloud','GeForce NOW'], meta:['Requiere suscripción del servicio'],
+   desc:'Abre tu biblioteca de juegos desde el navegador, sin consola.', bg:'', action:{kind:'service', id:'xcloud'}},
+];
+let heroBgSrc='';
+
+function renderHero(){
+  const h=HEROES[heroIdx];
+  $('#heroKicker').innerHTML=`<b>${h.kicker[0]}</b>`+h.kicker.slice(1).map(k=>`<span>${k}</span>`).join('');
+  const t=$('#heroTitle'); t.style.animation='none'; void t.offsetWidth; t.style.animation='fadeUp .6s var(--ease) both';
+  t.textContent=h.title;
+  $('#heroMeta').innerHTML=h.meta.map(m=>`<span>${m}</span>`).join('<span style="opacity:.4">•</span>');
+  $('#heroDesc').textContent=h.desc;
+  const bg=$('#heroBg');
+  bg.style.animation='none'; void bg.offsetWidth;
+  bg.style.backgroundImage = h.bg ? `url('${h.bg}')` : 'radial-gradient(900px 420px at 75% 20%, #2b1d54, transparent 60%), radial-gradient(700px 380px at 12% 10%, #10305a, transparent 62%)';
+  bg.style.animation='zoomSlow 18s ease-in-out infinite alternate';
+  $('#heroDots').innerHTML=HEROES.map((_,i)=>`<i class="${i===heroIdx?'on':''}" onclick="setHero(${i})"></i>`).join('');
+}
+function setHero(i){heroIdx=i;renderHero();clearInterval(heroTimer);heroTimer=setInterval(()=>{heroIdx=(heroIdx+1)%HEROES.length;renderHero()},9000)}
+function playHero(){const a=HEROES[heroIdx].action; if(a.kind==='service') launch(a.id, HEROES[heroIdx].title)}
+
+function cardArt(src, name, color){
+  if(src) return `<img src="${src}" loading="lazy" onerror="this.parentNode.innerHTML='<div class=fallback style=background:${color}>'+'${name[0]}'+'</div>'">`;
+  return `<div class="fallback" style="background:${color}">${name[0]}</div>`;
+}
+function filmCard(f){
+  return `<div class="card reveal" onclick="openFilm('${f.id}')">
+    <div class="art"><img src="${f.poster}" loading="lazy" onerror="this.style.display='none'">
+      ${f.year?`<span class="badge">${f.year}</span>`:''}</div>
+    <div class="name">${f.title}</div><div class="sub">Gratis · Internet Archive</div></div>`;
+}
+function svcCard(s){
+  const ico = s.icon? `<img src="assets/${s.icon}" style="background:linear-gradient(145deg,${s.color},${s.color}bb)" onerror="this.outerHTML='<div class=fallback style=background:${s.color}>${s.name[0]}</div>'">`
+                      : `<div class="fallback" style="background:${s.color||'#2b3448'}">${s.name[0]}</div>`;
+  return `<div class="card svc reveal" onclick="launch('${s.id}','${s.name}')"><div class="art">${ico}</div><div class="name">${s.name}</div></div>`;
+}
+
+function render(){
+  const q=($('#q').value||'').toLowerCase().trim();
+  const rows=[];
+  const svc = SERVICES.rows.find(r=>r.id==='populares')?.items||[];
+  const mx  = SERVICES.rows.find(r=>r.id==='mexico')?.items||[];
+  const gr  = SERVICES.rows.find(r=>r.id==='gratis')?.items||[];
+  const jg  = SERVICES.rows.find(r=>r.id==='juegos')?.items||[];
+
+  const films = FILMS.filter(f=>!q || f.title.toLowerCase().includes(q));
+  const svcAll = svc.concat(mx,gr).filter(s=>!q || s.name.toLowerCase().includes(q));
+
+  if(!q || films.length) rows.push({id:'peliculas',title:'Películas gratis',sub:'dominio público · sin anuncios',items:films.map(filmCard)});
+  if(!q || svcAll.length) rows.push({id:'servicios',title:'Tus servicios',sub:'se abren en el dispositivo elegido',items:svcAll.map(svcCard)});
+
+  const cont = [films[3],films[7],films[11]].filter(Boolean);
+  if(!q && cont.length) rows.unshift({id:'continuar',title:'Continuar viendo',sub:'',items:cont.map((f,i)=>`
+    <div class="card reveal" onclick="openFilm('${f.id}')"><div class="art">
+      <img src="${f.poster}" loading="lazy" onerror="this.style.display='none'">
+      <div class="bar"><i style="width:${45+i*15}%"></i></div></div>
+      <div class="name">${f.title}</div><div class="sub">${40+i*12}% visto</div></div>`)});
+
+  if(!q || jg.length) rows.push({id:'juegos',title:'Juegos en la nube',sub:'desde el navegador',items:jg.map(svcCard)});
+
+  $('#rows').innerHTML = rows.map(r=>`<section class="row" id="${r.id}"><h2>${r.title} ${r.sub?`<small>${r.sub}</small>`:''}</h2>
+      <div class="strip">${r.items.join('')}</div></section>`).join('');
+  observeReveals();
+  renderDevices();
+}
+function observeReveals(){
+  const obs=new IntersectionObserver((es)=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');obs.unobserve(e.target)}}),{threshold:.05});
+  document.querySelectorAll('.reveal').forEach((el,i)=>{el.style.animationDelay=(i%12*35)+'ms';obs.observe(el)});
+}
+function renderDevices(){
+  $('#devices').innerHTML = devices.map(d=>`<button class="dev ${d.online?'on':''} ${sel===d.id?'sel':''}" onclick="pick('${d.id}')"
+      title="${d.host}:${d.port} · Kubo v${d.kubo||'?'}${d.playing?' · reproduciendo':''}">
+      <span class="d"></span>${d.name.split(' ')[0]}</button>`).join('');
+}
+
+function openSheet(html){ $('#sheetBody').innerHTML = `<button class="close" onclick="closeSheet()">✕</button>`+html; $('#sheet').classList.add('open') }
+function closeSheet(){ $('#sheet').classList.remove('open') }
+function openFilm(id){
+  const f=FILMS.find(x=>x.id===id); if(!f) return;
+  openSheet(`<h3>${f.title}</h3>
+    <div class="chips"><span class="chip ok">Gratis</span>${f.year?`<span class="chip">${f.year}</span>`:''}
+      <span class="chip">Dominio público</span><span class="chip">Internet Archive</span></div>
+    <p style="color:#c3cbdd">Contenido libre de derechos, cortesía del Internet Archive. Se reproduce en el dispositivo que tengas seleccionado.</p>
+    <div class="actions">
+      <button class="btn play" onclick="playFilm('${f.id}')">▶ Reproducir</button>
+      <button class="btn ghost" onclick="window.open('${f.url}','_blank')">Ver ficha ↗</button>
+    </div>`);
+}
+function openPlan(){
+  const d=devices.find(x=>x.id===sel);
+  openSheet(`<h3>Mi plan</h3>
+    <div class="chips"><span class="chip ok">Activo</span><span class="chip">Kubo Familiar</span></div>
+    <div class="planbox">
+      <div class="planrow"><span>Plan</span><b>Kubo Familiar · $129/mes</b></div>
+      <div class="planrow"><span>Reproduce en</span><b>${d?d.name:'—'}</b></div>
+      <div class="planrow"><span>Dispositivos</span><b>${devices.filter(x=>x.online).length} en línea de ${devices.length}</b></div>
+      <div class="planrow"><span>Se renueva</span><b>8 de noviembre</b></div>
+    </div>
+    <div class="actions">
+      <button class="btn ghost" onclick="toast('Suscripción pausada (demo)')">⏸ Pausar</button>
+      <button class="btn ghost" onclick="toast('Suscripción reanudada (demo)')">▶ Reanudar</button>
+      <button class="btn danger" onclick="toast('Cancelación programada a fin de periodo (demo)')">✕ Cancelar</button>
+    </div>
+    <p style="color:var(--muted);font-size:12.5px;margin-top:14px">Estos botones ya están diseñados; en la fase 2 se conectan a la API (pausar/reanudar/cancelar de verdad).</p>`);
+}
+function pick(id){ sel=id; localStorage.setItem('kubo.sel',id); render() }
+
+async function api(action, extra){
+  const body={id:sel, action, ...(extra||{})};
+  const r=await fetch('/api/action',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+  return r.json();
+}
+async function launch(id, name){
+  const d=devices.find(x=>x.id===sel);
+  const s=[...(SERVICES.rows.find(r=>r.id==='populares')?.items||[]),...([])];
+  const web=(SERVICES.rows.flatMap(r=>r.items).find(i=>i.id===id)||{}).web;
+  if(d && d.kind==='android'){
+    const j=await api('launch',{service:id});
+    showPlaying(name, `Abriendo la app en ${d.name}`);
+    if(!j.ok) toast('no se pudo abrir en el dispositivo');
+  } else {
+    showPlaying(name, d?`Abriendo en ${d.name}`:'Abriendo en el navegador');
+    if(web) window.open(web,'_blank');
+  }
+}
+function playFilm(id){
+  const f=FILMS.find(x=>x.id===id); if(!f) return;
+  const d=devices.find(x=>x.id===sel);
+  showPlaying(f.title, d?`Reproduciendo en ${d.name}`:'Reproduciendo');
+  closeSheet();
+  api('launch',{service:'archive'}).catch(()=>{});
+}
+function showPlaying(title, sub){
+  $('#playingTitle').textContent=title; $('#playingSub').textContent=sub;
+  const el=$('#playing'); el.classList.add('on');
+  clearTimeout(el._t); el._t=setTimeout(()=>el.classList.remove('on'),6000);
+}
+
+async function poll(){
+  try{ const r=await fetch('/api/state',{cache:'no-store'}); devices=(await r.json()).devices||[];
+    if(!sel&&devices[0]) sel=devices[0].id; renderDevices(); }catch(e){}
+}
+window.addEventListener('scroll',()=>{ $('#top').classList.toggle('solid', scrollY>40) });
+
+(async function init(){
+  try{ SERVICES=await (await fetch('services.json',{cache:'no-store'})).json(); }catch(e){ toast('sin services.json') }
+  try{ FILMS=await (await fetch('content.json',{cache:'no-store'})).json(); }catch(e){}
+  renderHero(); setHero(0); render(); poll(); setInterval(poll,5000);
+})();
+</script>
+
+<!-- Adaptador Kubo-Kodi: la UI corre dentro del webserver de Kodi y habla JSON-RPC directo -->
+<script>
+(function(){
+  const RPC=(method,params)=>fetch('/jsonrpc',{method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({jsonrpc:'2.0',id:1,method:method,params:params||{}})}).then(r=>r.json());
+  const orig=window.fetch.bind(window);
+  const json=(obj)=>new Response(JSON.stringify(obj),{headers:{'Content-Type':'application/json'}});
+  window.fetch=async function(url,opts){
+    const u=String(url);
+    if(u.startsWith('/api/state')){
+      const out={devices:[]};
+      try{
+        const ping=await RPC('JSONRPC.Ping');
+        const gui=await RPC('GUI.GetProperties',{properties:['skin','currentwindow']});
+        const act=await RPC('Player.GetActivePlayers');
+        const d={id:'kodi',name:'Kodi (esta pantalla)',host:location.hostname,port:location.port||8080,kind:'android',
+                 online:ping.result==='pong',kubo:'',playing:null,title:null,percentage:null,
+                 skin:(gui.result&&gui.result.skin&&gui.result.skin.name)||'',
+                 window:(gui.result&&gui.result.currentwindow&&gui.result.currentwindow.label)||''};
+        const a=(act.result||[])[0];
+        if(a){ d.playing=a.type;
+          const it=await RPC('Player.GetItem',{playerid:a.playerid,properties:['title','showtitle']});
+          d.title=(it.result&&it.result.item&&(it.result.item.showtitle||it.result.item.title))||null;
+          const pr=await RPC('Player.GetProperties',{playerid:a.playerid,properties:['percentage']});
+          d.percentage=pr.result&&pr.result.percentage;
+        }
+        out.devices=[d];
+      }catch(e){}
+      return json(out);
+    }
+    if(u.startsWith('/api/action')){
+      const b=JSON.parse((opts&&opts.body)||'{}');
+      try{
+        if(b.action==='launch') await RPC('Addons.ExecuteAddon',{addonid:'plugin.program.kubo',params:'?action=launch&service='+encodeURIComponent(b.service||''),wait:false});
+        else if(b.action==='update') await RPC('Addons.ExecuteAddon',{addonid:'plugin.program.kubo',params:'?action=force',wait:false});
+        else if(b.action==='toggle') await RPC('Player.PlayPause',{playerid:1,play:'toggle'});
+        else if(b.action==='stop') await RPC('Player.Stop',{playerid:1});
+        const st=await fetch('/api/state'); return json({ok:true});
+      }catch(e){ return json({ok:false,error:String(e)}); }
+    }
+    return orig(url,opts);
+  };
+})();
+</script>
+</body>
+</html>

@@ -78,4 +78,19 @@
     </assets>
   </extension>
 </addon>
+<addon id="webinterface.kubo" name="Kubo UI" version="1.0.0" provider-name="Isaac">
+  <requires>
+    <import addon="xbmc.webinterface" version="1.0.0"/>
+  </requires>
+  <extension point="xbmc.webinterface" name="Kubo UI">
+    <entry>index.html</entry>
+  </extension>
+  <extension point="xbmc.addon.metadata">
+    <summary lang="es_MX">Interfaz Kubo para el hub (abrela desde tu telefono)</summary>
+    <summary lang="en_GB">Kubo UI for the hub (open it from your phone)</summary>
+    <description lang="es_MX">Portada animada tipo Netflix que controla este Kodi: abre servicios, reproduce y actualiza el hub.</description>
+    <platform>all</platform>
+    <assets><icon>icon.png</icon></assets>
+  </extension>
+</addon>
 </addons>
