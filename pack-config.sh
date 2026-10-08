@@ -21,6 +21,20 @@ done
 cat > "$STAGE/userdata/favourites.xml" <<'XML'
 <?xml version="1.0" encoding="UTF-8"?>
 <favourites>
+    <favourite name="Servicios del hub" thumb="">ActivateWindow(programs,plugin://plugin.program.kubo/?action=servicios,return)</favourite>
+    <favourite name="Netflix" thumb="">RunPlugin(plugin://plugin.program.kubo/?action=launch&amp;service=netflix)</favourite>
+    <favourite name="Disney+" thumb="">RunPlugin(plugin://plugin.program.kubo/?action=launch&amp;service=disney)</favourite>
+    <favourite name="HBO Max" thumb="">RunPlugin(plugin://plugin.program.kubo/?action=launch&amp;service=hbo)</favourite>
+    <favourite name="Prime Video" thumb="">RunPlugin(plugin://plugin.program.kubo/?action=launch&amp;service=prime)</favourite>
+    <favourite name="Pluto TV" thumb="">RunPlugin(plugin://plugin.program.kubo/?action=launch&amp;service=pluto)</favourite>
+    <favourite name="South Park (southpark.lat)" thumb="">RunPlugin(plugin://plugin.program.kubo/?action=launch&amp;service=southpark)</favourite>
+    <favourite name="YouTube" thumb="">RunPlugin(plugin://plugin.program.kubo/?action=launch&amp;service=youtube)</favourite>
+    <favourite name="Actualizar Kubo" thumb="">RunPlugin(plugin://plugin.program.kubo/?action=update)</favourite>
+    <favourite name="Kubo: estado" thumb="">RunPlugin(plugin://plugin.program.kubo/?action=status)</favourite>
+</favourites>
+XML'
+<?xml version="1.0" encoding="UTF-8"?>
+<favourites>
     <favourite name="Actualizar Kubo" thumb="">RunPlugin(plugin://plugin.program.kubo/?action=update)</favourite>
     <favourite name="Kubo: estado" thumb="">RunPlugin(plugin://plugin.program.kubo/?action=status)</favourite>
 </favourites>
