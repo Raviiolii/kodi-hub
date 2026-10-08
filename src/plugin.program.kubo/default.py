@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# VillaHub Updater - pulsa "Actualizar" o abre el addon para mas opciones.
+# Kubo Updater - pulsa "Actualizar" o abre el addon para mas opciones.
 import os
 import sys
 import json
@@ -15,25 +15,25 @@ import xbmcaddon
 import xbmcvfs
 
 ADDON = xbmcaddon.Addon()
-BASE = "https://raw.githubusercontent.com/Raviiolii/kodi-hub/main"
+BASE = "https://raw.githubusercontent.com/Raviiolii/kubo/main"
 VERSION_URL = BASE + "/config/version.json"
 PROFILE = xbmcvfs.translatePath("special://profile")
-STATE_DIR = os.path.join(PROFILE, "addon_data", "plugin.program.villahub")
+STATE_DIR = os.path.join(PROFILE, "addon_data", "plugin.program.kubo")
 STATE_FILE = os.path.join(STATE_DIR, "state.json")
 BACKUP_DIR = os.path.join(STATE_DIR, "backups")
 
 
 def log(msg):
-    xbmc.log("[villahub] {}".format(msg), xbmc.LOGINFO)
+    xbmc.log("[kubo] {}".format(msg), xbmc.LOGINFO)
 
 
 def notify(msg, icon=xbmcgui.NOTIFICATION_INFO, ms=6000):
-    xbmcgui.Dialog().notification("VillaHub", msg, icon, ms)
+    xbmcgui.Dialog().notification("Kubo", msg, icon, ms)
 
 
 def http_get(url, timeout=30):
     import urllib.request
-    req = urllib.request.Request(url, headers={"User-Agent": "kodi-villahub"})
+    req = urllib.request.Request(url, headers={"User-Agent": "kodi-kubo"})
     with urllib.request.urlopen(req, timeout=timeout) as r:
         return r.read()
 
@@ -158,7 +158,7 @@ def do_update(cfg=None):
         if cfg is None:
             notify("Ya estas al dia (v{})".format(state.get("version")))
         return
-    if cfg is None and not dialog.yesno("VillaHub", "Nueva version {} disponible.\n\n{}".format(
+    if cfg is None and not dialog.yesno("Kubo", "Nueva version {} disponible.\n\n{}".format(
             remote_v, info.get("notes", "")), yeslabel="Actualizar", nolabel="Ahora no"):
         return
     pack_url = BASE + "/" + info.get("file", "config/hubconfig-{}.zip".format(remote_v))
@@ -189,7 +189,7 @@ def status():
                                                         r.get("notes", ""))
     except Exception as e:
         msg = "Instalado: v{}\nServidor inaccesible: {}".format(st.get("version", "?"), e)
-    xbmcgui.Dialog().textviewer("VillaHub", msg)
+    xbmcgui.Dialog().textviewer("Kubo", msg)
 
 
 def main():

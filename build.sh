@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# VillaHub repo builder: empaqueta los addons y regenera el indice.
+# Kubo repo builder: empaqueta los addons y regenera el indice.
 # Uso: ./build.sh   (luego: git add -A && git commit -m "vX" && git push)
 set -euo pipefail
 cd "$(dirname "$0")"

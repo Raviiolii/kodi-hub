@@ -10,12 +10,12 @@ import xbmcaddon
 import xbmcvfs
 
 ADDON = xbmcaddon.Addon()
-BASE = "https://raw.githubusercontent.com/Raviiolii/kodi-hub/main"
+BASE = "https://raw.githubusercontent.com/Raviiolii/kubo/main"
 VERSION_URL = BASE + "/config/version.json"
 
 
 def log(msg):
-    xbmc.log("[villahub-service] {}".format(msg), xbmc.LOGINFO)
+    xbmc.log("[kubo-service] {}".format(msg), xbmc.LOGINFO)
 
 
 def run():
@@ -27,13 +27,13 @@ def run():
         pass
     try:
         import urllib.request
-        req = urllib.request.Request(VERSION_URL, headers={"User-Agent": "kodi-villahub"})
+        req = urllib.request.Request(VERSION_URL, headers={"User-Agent": "kodi-kubo"})
         with urllib.request.urlopen(req, timeout=20) as r:
             remote = json.loads(r.read().decode("utf-8"))
     except Exception as e:
         log("sin conexion: {}".format(e))
         return
-    state_file = os.path.join(xbmcvfs.translatePath("special://profile/addon_data/plugin.program.villahub"),
+    state_file = os.path.join(xbmcvfs.translatePath("special://profile/addon_data/plugin.program.kubo"),
                               "state.json")
     local = {"version": "0.0.0"}
     try:
@@ -50,13 +50,13 @@ def run():
 
     if newer(remote.get("version"), local.get("version")):
         xbmcgui.Dialog().notification(
-            "VillaHub",
+            "Kubo",
             "Actualizacion disponible: v{}".format(remote.get("version")),
             xbmcgui.NOTIFICATION_INFO, 8000)
         try:
             if ADDON.getSetting("auto_apply") == "true":
                 xbmc.executebuiltin(
-                    "RunPlugin(plugin://plugin.program.villahub/?action=update)")
+                    "RunPlugin(plugin://plugin.program.kubo/?action=update)")
         except Exception:
             pass
 

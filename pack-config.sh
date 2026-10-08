@@ -21,8 +21,8 @@ done
 cat > "$STAGE/userdata/favourites.xml" <<'XML'
 <?xml version="1.0" encoding="UTF-8"?>
 <favourites>
-    <favourite name="Actualizar VillaHub" thumb="">RunPlugin(plugin://plugin.program.villahub/?action=update)</favourite>
-    <favourite name="VillaHub: estado" thumb="">RunPlugin(plugin://plugin.program.villahub/?action=status)</favourite>
+    <favourite name="Actualizar Kubo" thumb="">RunPlugin(plugin://plugin.program.kubo/?action=update)</favourite>
+    <favourite name="Kubo: estado" thumb="">RunPlugin(plugin://plugin.program.kubo/?action=status)</favourite>
 </favourites>
 XML
 

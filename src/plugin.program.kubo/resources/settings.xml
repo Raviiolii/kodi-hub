@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <settings>
-  <category label="VillaHub">
+  <category label="Kubo">
     <setting id="auto_check" type="boolean" label="Buscar actualizaciones al iniciar" default="true"/>
     <setting id="auto_apply" type="boolean" label="Aplicar actualizaciones automaticamente" default="false"/>
   </category>
