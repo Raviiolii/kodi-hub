@@ -195,6 +195,10 @@ def main():
         do_update()
         xbmcplugin.endOfDirectory(handle)
         return
+    if "action=force" in args:          # admin: aplica sin preguntar
+        do_update(remote_info())
+        xbmcplugin.endOfDirectory(handle)
+        return
     if "action=status" in args:
         status()
         xbmcplugin.endOfDirectory(handle)
