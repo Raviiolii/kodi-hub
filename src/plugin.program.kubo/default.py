@@ -158,11 +158,13 @@ def do_update(cfg=None):
     dialog = xbmcgui.Dialog()
     try:
         info = cfg or remote_info()
+        log("info remota: {}".format(info))
     except Exception as e:
         notify("No se pudo consultar el servidor: {}".format(e), xbmcgui.NOTIFICATION_ERROR)
         return
     state = load_state()
     remote_v = info.get("version", "0")
+    log("comparando remoto={} local={}".format(remote_v, state.get("version")))
     if not is_newer(remote_v, state.get("version", "0.0.0")):
         if cfg is None:
             notify("Ya estas al dia (v{})".format(state.get("version")))
@@ -171,6 +173,7 @@ def do_update(cfg=None):
             remote_v, info.get("notes", "")), yeslabel="Actualizar", nolabel="Ahora no"):
         return
     pack_url = BASE + "/" + info.get("file", "config/hubconfig-{}.zip".format(remote_v))
+    log("url del paquete: {}".format(pack_url))
     tmp_zip = os.path.join(STATE_DIR, "update.zip")
     os.makedirs(STATE_DIR, exist_ok=True)
     try:
@@ -179,6 +182,7 @@ def do_update(cfg=None):
             f.write(data)
         n = apply_pack(tmp_zip, remote_v)
     except Exception as e:
+        log("fallo la actualizacion: {}".format(e))
         notify("Fallo la actualizacion: {}".format(e), xbmcgui.NOTIFICATION_ERROR)
         return
     if xbmc.getCondVisibility("System.Platform.Android"):
@@ -204,6 +208,7 @@ def status():
 def main():
     handle = int(sys.argv[1])
     args = sys.argv[2] if len(sys.argv) > 2 else ""
+    log("main args={!r} handle={}".format(args, handle))
     if "action=update" in args:
         do_update()
         xbmcplugin.endOfDirectory(handle)
