@@ -103,15 +103,21 @@ def apply_settings(data):
     if not settings:
         return
     import urllib.request
+    endpoints = ["http://[::1]:8080/jsonrpc", "http://127.0.0.1:8080/jsonrpc"]
     for key, value in settings.items():
         body = json.dumps({"jsonrpc": "2.0", "id": 1, "method": "Settings.SetSettingValue",
                            "params": {"setting": key, "value": value}}).encode()
-        try:
-            req = urllib.request.Request("http://127.0.0.1:8080/jsonrpc", data=body,
-                                         headers={"Content-Type": "application/json"})
-            urllib.request.urlopen(req, timeout=5).read()
-        except Exception as e:
-            log("ajuste {} no aplicado: {}".format(key, e))
+        done = False
+        for ep in endpoints:
+            try:
+                req = urllib.request.Request(ep, data=body, headers={"Content-Type": "application/json"})
+                urllib.request.urlopen(req, timeout=5).read()
+                done = True
+                break
+            except Exception:
+                continue
+        if not done:
+            log("ajuste {} no aplicado (¿webserver desactivado?)".format(key))
 
 
 def apply_pack(zip_path, version):
