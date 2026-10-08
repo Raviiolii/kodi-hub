@@ -2,7 +2,19 @@
 
 > Lee esto primero. Todo lo demás son detalles.
 
-## 1. Qué está corriendo (systemd user, sobrevive reinicios)
+## 0. CÓMO SE ENCIENDE (nada arranca solo — decisión del 8-oct-2026)
+
+```
+kubo start     # enciende app :8896 + starter :8897 + panel :8898
+kubo open      # enciende y abre la interfaz en el navegador
+kubo kodi      # abre Kodi (su interfaz web en http://[::1]:8080)
+kubo status    # qué está encendido
+kubo stop      # apaga todo (0 consumo)
+```
+No hay autostart de Kodi ni unidades habilitadas: consumo cuando se pide.
+Medido: cada servicio Node ≈ **52 MB / 0.4 % CPU**; Kodi ≈ **364 MB / 4.2 %**.
+
+## 1. Qué existe (unidades instaladas, se encienden a mano)
 
 | Unidad | Qué es | URL local |
 |---|---|---|
