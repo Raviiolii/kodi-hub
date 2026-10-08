@@ -53,7 +53,25 @@ def save_state(data):
 
 
 def remote_info():
-    return json.loads(http_get(VERSION_URL + "?t=" + str(int(time.time()))).decode("utf-8"))
+    """Version remota. Primero la API de GitHub (no pasa por el CDN cacheado), luego raw."""
+    import base64
+    intentos = [
+        ("api", "https://api.github.com/repos/Raviiolii/kubo/contents/config/version.json?ref=main"),
+        ("raw", VERSION_URL + "?t=" + str(int(time.time()))),
+    ]
+    for tipo, url in intentos:
+        try:
+            data = http_get(url).decode("utf-8")
+            if tipo == "api":
+                payload = json.loads(data)
+                data = base64.b64decode(payload.get("content", "")).decode("utf-8")
+            info = json.loads(data)
+            if info.get("version"):
+                log("version remota via {}: {}".format(tipo, info["version"]))
+                return info
+        except Exception as e:
+            log("fallo consulta {}: {}".format(tipo, e))
+    raise Exception("no pude consultar la version remota")
 
 
 def is_newer(remote, local):
