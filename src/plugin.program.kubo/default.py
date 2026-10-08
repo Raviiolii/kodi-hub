@@ -214,16 +214,26 @@ def status():
 
 # ------------------- Servicios (lanzador legal: abre la app oficial o la web) -------------------
 SERVICIOS = {
-    'netflix':   {'name': 'Netflix',     'android': 'com.netflix.mediaclient', 'web': 'https://www.netflix.com/browse'},
-    'disney':    {'name': 'Disney+',     'android': 'com.disney.disneyplus',   'web': 'https://www.disneyplus.com/'},
-    'star':      {'name': 'Star+',       'android': 'com.disney.starplus',     'web': 'https://www.starplus.com/'},
-    'hbo':       {'name': 'HBO Max',     'android': 'com.wbd.stream',          'web': 'https://www.max.com/'},
-    'prime':     {'name': 'Prime Video', 'android': 'com.amazon.avod.thirdpartyclient', 'web': 'https://www.primevideo.com/'},
-    'pluto':     {'name': 'Pluto TV',    'android': 'tv.pluto.android',        'web': 'https://pluto.tv/'},
-    'southpark': {'name': 'South Park',  'android': '',                        'web': 'https://www.southpark.lat/'},
-    'youtube':   {'name': 'YouTube',     'android': 'com.google.android.youtube', 'web': 'https://www.youtube.com/'},
+    'netflix':   {'name': 'Netflix',     'icon': 'netflix.png',     'android': 'com.netflix.mediaclient', 'web': 'https://www.netflix.com/browse'},
+    'disney':    {'name': 'Disney+',     'icon': 'disney.png',     'android': 'com.disney.disneyplus',   'web': 'https://www.disneyplus.com/'},
+    'star':      {'name': 'Star+',       'icon': 'disney.png',       'android': 'com.disney.starplus',     'web': 'https://www.starplus.com/'},
+    'hbo':       {'name': 'HBO Max',     'icon': 'hbo.png',     'android': 'com.wbd.stream',          'web': 'https://www.max.com/'},
+    'prime':     {'name': 'Prime Video', 'icon': 'prime.png', 'android': 'com.amazon.avod.thirdpartyclient', 'web': 'https://www.primevideo.com/'},
+    'pluto':     {'name': 'Pluto TV',    'icon': 'pluto.png',    'android': 'tv.pluto.android',        'web': 'https://pluto.tv/'},
+    'southpark': {'name': 'South Park',  'icon': 'southpark.png',  'android': '',                        'web': 'https://www.southpark.lat/'},
+    'youtube':   {'name': 'YouTube',     'icon': 'youtube.png',     'android': 'com.google.android.youtube', 'web': 'https://www.youtube.com/'},
 }
 
+
+
+# Addons gratis que SI funcionan dentro de Kodi (abren su catalogo)
+GRATIS = [
+    ('youtube.png',     'YouTube',          'plugin://plugin.video.youtube/'),
+    ('dailymotion.png', 'Dailymotion',      'plugin://plugin.video.dailymotion_com/'),
+    ('archive.png',     'Internet Archive', 'plugin://plugin.video.archive.org/'),
+    ('pluto.png',       'Pluto TV',         'plugin://plugin.video.plutotv/'),
+    ('rtve.png',        'RTVE (Espana)',    'plugin://plugin.video.rtve/'),
+]
 
 def lanzar(service):
     """Abre el servicio: app oficial en Android, navegador en escritorio."""
@@ -274,10 +284,19 @@ def main():
         xbmcplugin.endOfDirectory(handle)
         return
     if "action=servicios" in args:
+        media = os.path.join(ADDON.getAddonInfo('path'), 'resources', 'media')
         for k, v in SERVICIOS.items():
             li = xbmcgui.ListItem(label=v['name'])
+            ico = os.path.join(media, v.get('icon', 'youtube.png'))
+            li.setArt({'icon': ico, 'thumb': ico})
             li.setInfo("video", {"plot": "Abrir {}".format(v['name'])})
             xbmcplugin.addDirectoryItem(handle, "{}?action=launch&service={}".format(sys.argv[0], k), li, isFolder=False)
+        for ico_name, label, url in GRATIS:
+            li = xbmcgui.ListItem(label=label)
+            ico = os.path.join(media, ico_name)
+            li.setArt({'icon': ico, 'thumb': ico})
+            li.setInfo("video", {"plot": "Catalogo gratis dentro de Kodi"})
+            xbmcplugin.addDirectoryItem(handle, url, li, isFolder=True)
         xbmcplugin.setContent(handle, "files")
         xbmcplugin.endOfDirectory(handle)
         return
