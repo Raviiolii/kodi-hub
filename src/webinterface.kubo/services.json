@@ -1,0 +1,257 @@
+{
+  "version": 1,
+  "rows": [
+    {
+      "id": "populares",
+      "title": "Populares",
+      "items": [
+        {
+          "id": "netflix",
+          "name": "Netflix",
+          "icon": "netflix.png",
+          "android": "com.netflix.mediaclient",
+          "web": "https://www.netflix.com/browse",
+          "color": "#e50914"
+        },
+        {
+          "id": "disney",
+          "name": "Disney+",
+          "icon": "disney.png",
+          "android": "com.disney.disneyplus",
+          "web": "https://www.disneyplus.com/",
+          "color": "#0b1f4b"
+        },
+        {
+          "id": "hbo",
+          "name": "HBO Max",
+          "icon": "hbo.png",
+          "android": "com.wbd.stream",
+          "web": "https://www.max.com/",
+          "color": "#5b2fd6"
+        },
+        {
+          "id": "prime",
+          "name": "Prime Video",
+          "icon": "prime.png",
+          "android": "com.amazon.avod.thirdpartyclient",
+          "web": "https://www.primevideo.com/",
+          "color": "#00a8e1"
+        },
+        {
+          "id": "appletv",
+          "name": "Apple TV+",
+          "icon": "appletv.png",
+          "android": "com.apple.atve.androidtv.appletv",
+          "web": "https://tv.apple.com/",
+          "color": "#1c1c1e"
+        },
+        {
+          "id": "paramount",
+          "name": "Paramount+",
+          "icon": "paramount.png",
+          "android": "com.cbs.app",
+          "web": "https://www.paramountplus.com/",
+          "color": "#0064ff"
+        },
+        {
+          "id": "hulu",
+          "name": "Hulu",
+          "icon": "hulu.png",
+          "android": "com.hulu.plus",
+          "web": "https://www.hulu.com/",
+          "color": "#1ce783"
+        },
+        {
+          "id": "peacock",
+          "name": "Peacock",
+          "icon": "peacock.png",
+          "android": "com.peacocktv.peacockandroid",
+          "web": "https://www.peacocktv.com/",
+          "color": "#ff6f00"
+        },
+        {
+          "id": "discovery",
+          "name": "Discovery+",
+          "icon": "discovery.png",
+          "android": "com.discovery.discoveryplus.mobile",
+          "web": "https://www.discoveryplus.com/",
+          "color": "#1f7ae0"
+        },
+        {
+          "id": "crunchyroll",
+          "name": "Crunchyroll",
+          "icon": "crunchyroll.png",
+          "android": "com.crunchyroll.crunchyroid",
+          "web": "https://www.crunchyroll.com/",
+          "color": "#f47521"
+        },
+        {
+          "id": "mubi",
+          "name": "MUBI",
+          "icon": "mubi.png",
+          "android": "com.mubi",
+          "web": "https://mubi.com/",
+          "color": "#00213d"
+        },
+        {
+          "id": "tubi",
+          "name": "Tubi",
+          "icon": "tubi.png",
+          "android": "com.tubitv",
+          "web": "https://tubitv.com/",
+          "color": "#ff5a1f"
+        }
+      ]
+    },
+    {
+      "id": "mexico",
+      "title": "En México",
+      "items": [
+        {
+          "id": "vix",
+          "name": "ViX",
+          "icon": "vix.png",
+          "android": "com.univision.prendetv",
+          "web": "https://vix.com/",
+          "color": "#fa5b0f"
+        },
+        {
+          "id": "star",
+          "name": "Star+",
+          "icon": "disney.png",
+          "android": "com.disney.starplus",
+          "web": "https://www.starplus.com/",
+          "color": "#0f2c66"
+        },
+        {
+          "id": "rtve",
+          "name": "RTVE Play",
+          "icon": "rtve.png",
+          "android": "",
+          "web": "https://www.rtve.es/play/",
+          "color": "#0b4ea2"
+        },
+        {
+          "id": "canal5",
+          "name": "Canal 5",
+          "icon": "canal5.png",
+          "android": "",
+          "web": "https://www.canal5.com.mx/",
+          "color": "#c81e3a"
+        },
+        {
+          "id": "pluto",
+          "name": "Pluto TV",
+          "icon": "pluto.png",
+          "android": "tv.pluto.android",
+          "web": "https://pluto.tv/",
+          "color": "#ffe600"
+        },
+        {
+          "id": "southpark",
+          "name": "South Park",
+          "icon": "southpark.png",
+          "android": "",
+          "web": "https://www.southpark.lat/",
+          "color": "#2f6b3a"
+        }
+      ]
+    },
+    {
+      "id": "gratis",
+      "title": "Gratis en Kubo",
+      "items": [
+        {
+          "id": "youtube",
+          "name": "YouTube",
+          "icon": "youtube.png",
+          "android": "com.google.android.youtube",
+          "web": "https://www.youtube.com/",
+          "color": "#ff0033"
+        },
+        {
+          "id": "dailymotion",
+          "name": "Dailymotion",
+          "icon": "dailymotion.png",
+          "android": "",
+          "web": "https://www.dailymotion.com/",
+          "color": "#0a66c2"
+        },
+        {
+          "id": "archive",
+          "name": "Internet Archive",
+          "icon": "archive.png",
+          "android": "",
+          "web": "https://archive.org/details/movies",
+          "color": "#1a1a1a"
+        },
+        {
+          "id": "plex",
+          "name": "Plex",
+          "icon": "plex.png",
+          "android": "com.plexapp.android",
+          "web": "https://app.plex.tv/",
+          "color": "#e5a00d"
+        },
+        {
+          "id": "sling",
+          "name": "Sling",
+          "icon": "sling.png",
+          "android": "com.sling",
+          "web": "https://www.sling.com/",
+          "color": "#f47b20"
+        },
+        {
+          "id": "fubo",
+          "name": "Fubo",
+          "icon": "fubo.png",
+          "android": "com.fubo.firetv.screen",
+          "web": "https://www.fubo.tv/",
+          "color": "#ff5a5f"
+        }
+      ]
+    },
+    {
+      "id": "juegos",
+      "title": "Juegos en la nube",
+      "items": [
+        {
+          "id": "xcloud",
+          "name": "Xbox Cloud Gaming",
+          "icon": "xbox.png",
+          "android": "",
+          "web": "https://www.xbox.com/play",
+          "color": "#107c10"
+        },
+        {
+          "id": "gfn",
+          "name": "GeForce NOW",
+          "icon": "gfn.png",
+          "android": "",
+          "web": "https://play.geforcenow.com/",
+          "color": "#76b900"
+        }
+      ]
+    },
+    {
+      "id": "kubo",
+      "title": "Kubo",
+      "items": [
+        {
+          "id": "update",
+          "name": "Actualizar hub",
+          "icon": "kubo-update.png",
+          "action": "update",
+          "color": "#6d5cff"
+        },
+        {
+          "id": "panel",
+          "name": "Panel de dispositivos",
+          "icon": "kubo-panel.png",
+          "href": "http://localhost:8898",
+          "color": "#4a5568"
+        }
+      ]
+    }
+  ]
+}
