@@ -65,8 +65,8 @@ def is_newer(remote, local):
         return remote != local
 
 
-def merge_favourites(path):
-    """Agrega entradas nuevas sin borrar las existentes."""
+def merge_favourites(path, remove_names=None):
+    """Agrega entradas nuevas sin borrar las existentes; quita las retiradas."""
     try:
         new = ET.parse(path).getroot()
     except Exception:
@@ -78,15 +78,21 @@ def merge_favourites(path):
     try:
         tree = ET.parse(target)
         root = tree.getroot()
+        removed = 0
+        if remove_names:
+            for f in list(root.findall("favourite")):
+                if f.get("name") in remove_names:
+                    root.remove(f)
+                    removed += 1
         names = {f.get("name") for f in root.findall("favourite")}
         added = 0
         for f in new.findall("favourite"):
             if f.get("name") not in names:
                 root.append(f)
                 added += 1
-        if added:
+        if added or removed:
             tree.write(target, encoding="utf-8", xml_declaration=True)
-            log("favoritos: +{}".format(added))
+            log("favoritos: +{} -{}".format(added, removed))
     except Exception as e:
         log("no se pudo fusionar favoritos: {}".format(e))
 
@@ -115,6 +121,13 @@ def apply_pack(zip_path, version):
     with zipfile.ZipFile(zip_path) as z:
         z.extractall(tmp)
     count = 0
+    pack_meta = {}
+    try:
+        with open(os.path.join(tmp, "pack.json"), "r", encoding="utf-8") as f:
+            pack_meta = json.load(f)
+    except Exception:
+        pass
+    remove_favs = pack_meta.get("remove_favourites") or []
     for root, _dirs, files in os.walk(tmp):
         for fn in files:
             full = os.path.join(root, fn)
@@ -124,7 +137,7 @@ def apply_pack(zip_path, version):
             rel = os.path.join(*rel.split(os.sep)[1:])
             dest = os.path.join(PROFILE, rel)
             if rel == "favourites.xml":
-                merge_favourites(full)
+                merge_favourites(full, remove_favs)
                 count += 1
                 continue
             os.makedirs(os.path.dirname(dest), exist_ok=True)
@@ -135,11 +148,7 @@ def apply_pack(zip_path, version):
             shutil.copy(full, dest)
             count += 1
     shutil.rmtree(tmp, ignore_errors=True)
-    try:
-        with open(os.path.join(tmp, "pack.json"), "r", encoding="utf-8") as f:
-            apply_settings(json.load(f))
-    except Exception:
-        pass
+    apply_settings(pack_meta)
     save_state({"version": version, "applied": time.strftime("%Y-%m-%d %H:%M")})
     log("paquete {} aplicado ({} archivos)".format(version, count))
     return count

@@ -32,6 +32,7 @@ cat > "$STAGE/pack.json" <<EOF
   "version": "$VER",
   "date": "$(date +%F)",
   "notes": "$NOTES",
+  "remove_favourites": ["Actualizar VillaHub", "VillaHub: estado"],
   "settings": {
     "locale.audiolanguage": "Spanish",
     "locale.subtitlelanguage": "Spanish"

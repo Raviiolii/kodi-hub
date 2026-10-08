@@ -1,6 +1,6 @@
 {
-  "version": "2.0.0",
+  "version": "2.0.1",
   "date": "2026-10-08",
-  "file": "config/hubconfig-2.0.0.zip",
-  "notes": "Kubo 2.0: renombrado, favoritos del hub, Pluto TV y RTVE instalados"
+  "file": "config/hubconfig-2.0.1.zip",
+  "notes": "Kubo 2.0.1: limpia favoritos retirados"
 }
