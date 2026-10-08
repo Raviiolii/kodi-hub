@@ -211,6 +211,50 @@ def status():
     xbmcgui.Dialog().textviewer("Kubo", msg)
 
 
+
+# ------------------- Servicios (lanzador legal: abre la app oficial o la web) -------------------
+SERVICIOS = {
+    'netflix':   {'name': 'Netflix',     'android': 'com.netflix.mediaclient', 'web': 'https://www.netflix.com/browse'},
+    'disney':    {'name': 'Disney+',     'android': 'com.disney.disneyplus',   'web': 'https://www.disneyplus.com/'},
+    'star':      {'name': 'Star+',       'android': 'com.disney.starplus',     'web': 'https://www.starplus.com/'},
+    'hbo':       {'name': 'HBO Max',     'android': 'com.wbd.stream',          'web': 'https://www.max.com/'},
+    'prime':     {'name': 'Prime Video', 'android': 'com.amazon.avod.thirdpartyclient', 'web': 'https://www.primevideo.com/'},
+    'pluto':     {'name': 'Pluto TV',    'android': 'tv.pluto.android',        'web': 'https://pluto.tv/'},
+    'southpark': {'name': 'South Park',  'android': '',                        'web': 'https://www.southpark.lat/'},
+    'youtube':   {'name': 'YouTube',     'android': 'com.google.android.youtube', 'web': 'https://www.youtube.com/'},
+}
+
+
+def lanzar(service):
+    """Abre el servicio: app oficial en Android, navegador en escritorio."""
+    s = SERVICIOS.get(service)
+    if not s:
+        notify('Servicio desconocido: {}'.format(service))
+        return
+    try:
+        if xbmc.getCondVisibility('System.Platform.Android'):
+            if s['android']:
+                xbmc.executebuiltin('StartAndroidActivity({})'.format(s['android']))
+            else:
+                xbmc.executebuiltin('StartAndroidActivity(,android.intent.action.VIEW,,{})'.format(s['web']))
+            notify('Abriendo {}'.format(s['name']))
+            return
+        import subprocess
+        intentos = [
+            ['flatpak-spawn', '--host', 'flatpak', 'run', 'org.chromium.Chromium', s['web']],
+            ['flatpak-spawn', '--host', 'xdg-open', s['web']],
+        ]
+        for cmd in intentos:
+            try:
+                subprocess.Popen(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+                notify('Abriendo {} en el navegador'.format(s['name']))
+                return
+            except Exception as e:
+                log('intento fallido {}: {}'.format(cmd[0], e))
+        notify('No pude abrir {}'.format(s['name']), xbmcgui.NOTIFICATION_WARNING)
+    except Exception as e:
+        log('launch error: {}'.format(e))
+
 def main():
     handle = int(sys.argv[1])
     args = sys.argv[2] if len(sys.argv) > 2 else ""
@@ -223,6 +267,20 @@ def main():
         do_update(remote_info())
         xbmcplugin.endOfDirectory(handle)
         return
+    if "action=launch" in args:
+        import re as _re
+        m = _re.search(r'service=([a-z0-9_]+)', args)
+        lanzar(m.group(1) if m else '')
+        xbmcplugin.endOfDirectory(handle)
+        return
+    if "action=servicios" in args:
+        for k, v in SERVICIOS.items():
+            li = xbmcgui.ListItem(label=v['name'])
+            li.setInfo("video", {"plot": "Abrir {}".format(v['name'])})
+            xbmcplugin.addDirectoryItem(handle, "{}?action=launch&service={}".format(sys.argv[0], k), li, isFolder=False)
+        xbmcplugin.setContent(handle, "files")
+        xbmcplugin.endOfDirectory(handle)
+        return
     if "action=status" in args:
         status()
         xbmcplugin.endOfDirectory(handle)
@@ -230,6 +288,7 @@ def main():
     # menu
     st = load_state()
     items = [
+        ("Servicios (Netflix, Disney+, ...)", "action=servicios", "Abre tus servicios y sitios"),
         ("Actualizar hub ahora", "action=update", "Descarga y aplica la ultima version"),
         ("Estado".format(), "action=status", "Version instalada vs. servidor"),
     ]
