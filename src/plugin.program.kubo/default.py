@@ -16,7 +16,7 @@ import xbmcvfs
 
 ADDON = xbmcaddon.Addon()
 BASE = "https://raw.githubusercontent.com/Raviiolii/kubo/main"
-VERSION_URL = BASE + "/config/version.json"
+VERSION_URL = BASE + "/config/version.json"  # + cache buster en runtime
 PROFILE = xbmcvfs.translatePath("special://profile")
 STATE_DIR = os.path.join(PROFILE, "addon_data", "plugin.program.kubo")
 STATE_FILE = os.path.join(STATE_DIR, "state.json")
@@ -53,7 +53,7 @@ def save_state(data):
 
 
 def remote_info():
-    return json.loads(http_get(VERSION_URL).decode("utf-8"))
+    return json.loads(http_get(VERSION_URL + "?t=" + str(int(time.time()))).decode("utf-8"))
 
 
 def is_newer(remote, local):
@@ -174,7 +174,7 @@ def do_update(cfg=None):
     tmp_zip = os.path.join(STATE_DIR, "update.zip")
     os.makedirs(STATE_DIR, exist_ok=True)
     try:
-        data = http_get(pack_url, timeout=60)
+        data = http_get(pack_url + "?t=" + str(int(time.time())), timeout=60)
         with open(tmp_zip, "wb") as f:
             f.write(data)
         n = apply_pack(tmp_zip, remote_v)

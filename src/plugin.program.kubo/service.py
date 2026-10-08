@@ -11,7 +11,7 @@ import xbmcvfs
 
 ADDON = xbmcaddon.Addon()
 BASE = "https://raw.githubusercontent.com/Raviiolii/kubo/main"
-VERSION_URL = BASE + "/config/version.json"
+VERSION_URL = BASE + "/config/version.json"  # + cache buster en runtime
 
 
 def log(msg):
@@ -27,7 +27,7 @@ def run():
         pass
     try:
         import urllib.request
-        req = urllib.request.Request(VERSION_URL, headers={"User-Agent": "kodi-kubo"})
+        req = urllib.request.Request(VERSION_URL + "?t=" + str(int(time.time())), headers={"User-Agent": "kodi-kubo"})
         with urllib.request.urlopen(req, timeout=20) as r:
             remote = json.loads(r.read().decode("utf-8"))
     except Exception as e:
