@@ -1,6 +1,6 @@
 {
-  "version": "2.1.1",
+  "version": "2.1.2",
   "date": "2026-10-08",
-  "file": "config/hubconfig-2.1.1.zip",
-  "notes": "Kubo 2.1.1: favoritos de servicios (Netflix, Disney+, HBO, Prime, Pluto, South Park, YouTube) + Actualizar"
+  "file": "config/hubconfig-2.1.2.zip",
+  "notes": "Kubo 2.1.2: arregla favoritos del pack (XML valido) + servicios"
 }

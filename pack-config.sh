@@ -32,12 +32,6 @@ cat > "$STAGE/userdata/favourites.xml" <<'XML'
     <favourite name="Actualizar Kubo" thumb="">RunPlugin(plugin://plugin.program.kubo/?action=update)</favourite>
     <favourite name="Kubo: estado" thumb="">RunPlugin(plugin://plugin.program.kubo/?action=status)</favourite>
 </favourites>
-XML'
-<?xml version="1.0" encoding="UTF-8"?>
-<favourites>
-    <favourite name="Actualizar Kubo" thumb="">RunPlugin(plugin://plugin.program.kubo/?action=update)</favourite>
-    <favourite name="Kubo: estado" thumb="">RunPlugin(plugin://plugin.program.kubo/?action=status)</favourite>
-</favourites>
 XML
 
 # 3) metadatos del paquete (incluye ajustes que el updater aplica via JSON-RPC local)
