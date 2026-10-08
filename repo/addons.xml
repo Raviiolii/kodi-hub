@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<addons>
+<addon id="plugin.program.villahub" name="VillaHub Updater" version="1.0.0" provider-name="Isaac">
+  <requires>
+    <import addon="xbmc.python" version="3.0.0"/>
+  </requires>
+  <extension point="xbmc.python.pluginsource" library="default.py">
+    <provides>executable</provides>
+  </extension>
+  <extension point="xbmc.service" library="service.py" start="startup"/>
+  <extension point="xbmc.addon.metadata">
+    <summary lang="es_MX">Actualiza el hub (menu, skin, favoritos, addons)</summary>
+    <summary lang="en_GB">Updates the hub (menu, skin, favourites, addons)</summary>
+    <description lang="es_MX">Consulta el repositorio de VillaHub y aplica la ultima configuracion del hub cuando el administrador publica una version nueva.</description>
+    <description lang="en_GB">Checks the VillaHub repository and applies the latest hub configuration when the administrator publishes a new version.</description>
+    <platform>all</platform>
+    <assets>
+      <icon>icon.png</icon>
+    </assets>
+  </extension>
+</addon>
+<addon id="repository.villahub" name="VillaHub Repository" version="1.0.0" provider-name="Isaac">
+  <requires>
+    <import addon="xbmc.addon" version="12.0.0"/>
+  </requires>
+  <extension point="xbmc.addon.repository" name="VillaHub Repository">
+    <dir minversion="21.0.0">
+      <info compressed="false">https://raw.githubusercontent.com/Raviiolii/kodi-hub/main/repo/addons.xml</info>
+      <checksum>https://raw.githubusercontent.com/Raviiolii/kodi-hub/main/repo/addons.xml.md5</checksum>
+      <datadir zip="true">https://raw.githubusercontent.com/Raviiolii/kodi-hub/main/repo/</datadir>
+    </dir>
+  </extension>
+  <extension point="xbmc.addon.metadata">
+    <summary lang="es_MX">Repositorio de actualizaciones de VillaHub</summary>
+    <summary lang="en_GB">VillaHub update repository</summary>
+    <description lang="es_MX">Desde este repositorio se actualizan los addons y el paquete de configuracion del hub (menu, skin, favoritos).</description>
+    <description lang="en_GB">This repository updates the VillaHub addons and configuration pack (menu, skin, favourites).</description>
+    <platform>all</platform>
+    <assets>
+      <icon>icon.png</icon>
+    </assets>
+  </extension>
+</addon>
+</addons>
