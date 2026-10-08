@@ -7,6 +7,7 @@ import time
 import xbmc
 import xbmcgui
 import xbmcaddon
+import xbmcvfs
 
 ADDON = xbmcaddon.Addon()
 BASE = "https://raw.githubusercontent.com/Raviiolii/kodi-hub/main"
@@ -32,7 +33,7 @@ def run():
     except Exception as e:
         log("sin conexion: {}".format(e))
         return
-    state_file = os.path.join(xbmc.translatePath("special://profile/addon_data/plugin.program.villahub"),
+    state_file = os.path.join(xbmcvfs.translatePath("special://profile/addon_data/plugin.program.villahub"),
                               "state.json")
     local = {"version": "0.0.0"}
     try:
