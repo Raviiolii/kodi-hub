@@ -78,9 +78,9 @@
     </assets>
   </extension>
 </addon>
-<addon id="webinterface.kubo" name="Kubo UI" version="1.0.0" provider-name="Isaac">
+<addon id="webinterface.kubo" name="Kubo UI" version="1.0.1" provider-name="Isaac">
   <requires>
-    <import addon="xbmc.webinterface" version="1.0.0"/>
+    <import addon="xbmc.webinterface" version="1.0.1"/>
   </requires>
   <extension point="xbmc.webinterface" name="Kubo UI">
     <entry>index.html</entry>
