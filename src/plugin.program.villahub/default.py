@@ -172,9 +172,13 @@ def do_update(cfg=None):
     except Exception as e:
         notify("Fallo la actualizacion: {}".format(e), xbmcgui.NOTIFICATION_ERROR)
         return
-    notify("Hub actualizado a v{} ({} archivos). Reiniciando...".format(remote_v, n))
-    xbmc.sleep(1500)
-    xbmc.executebuiltin("RestartApp")
+    if xbmc.getCondVisibility("System.Platform.Android"):
+        # En Android RestartApp cierra la app sin relanzarla: avisamos y se aplica al reabrir.
+        notify("Hub actualizado a v{}. Cierra y abre Kodi para aplicar.".format(remote_v))
+    else:
+        notify("Hub actualizado a v{} ({} archivos). Reiniciando...".format(remote_v, n))
+        xbmc.sleep(1500)
+        xbmc.executebuiltin("RestartApp")
 
 
 def status():
